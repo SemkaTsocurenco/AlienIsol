@@ -10,13 +10,10 @@ class AlienInvasion():
 		# инициализирует работу класса
 		py.init()
 		self.settings=Settings()
-		
-		# полноэкранный режим
-		self.screen = py.display.set_mode((0,0), py.FULLSCREEN)
-		self.settings.screen_width = self.screen.get_rect().width
-		self.settings.screen_height = self.screen.get_rect().height
-		
-		self.screen = py.display.set_mode((self.settings.screen_width,self.settings.screen_height))
+		# размер экрана из настроек
+		self.screen = py.display.set_mode((self.settings.screen_width, self.settings.screen_height))
+		self.buff_wigth = self.settings.screen_width
+		self.buff_heigth = self.settings.screen_height
 		py.display.set_caption("Alien Invasion")
 		# Прописовка корабля
 		self.ship = Ship(self)
@@ -48,7 +45,10 @@ class AlienInvasion():
 			self.ship.moving_left = True
 		elif event.key == py.K_ESCAPE:
 			sys.exit()
-
+		elif event.key == py.K_o:
+			self.switch_fullscreen()
+			
+	
 	def _check_keyup(self,event):  # вспомогательный для check_ivents
 		# для ивентов отпущенной клавиши
 		if event.key == py.K_d:
@@ -63,9 +63,24 @@ class AlienInvasion():
 		self.ship.blitme()
 		# последний прорисованный экран
 		py.display.flip()
+		
 
-	
-	
+	def switch_fullscreen(self):
+		if py.display.get_window_size() == (self.buff_wigth,self.buff_heigth):
+			# полноэкранный режим
+			self.screen = py.display.set_mode((0, 0), py.FULLSCREEN)
+			self.settings.screen_width = self.screen.get_rect().width
+			self.settings.screen_height = self.screen.get_rect().height
+			
+			self.ship.rect.midbottom = self.screen.get_rect().midbottom
+		else:
+			self.settings.screen_width = self.buff_wigth
+			self.settings.screen_height = self.buff_heigth
+			self.screen = py.display.set_mode((self.settings.screen_width, self.settings.screen_height))
+			self.ship.rect.midbottom = self.screen.get_rect().midbottom
+		self._update_screen()
+
+
 if __name__ == '__main__':
 	# создать экземпляр
 	ai=AlienInvasion()
