@@ -11,6 +11,11 @@ class AlienInvasion():
 		py.init()
 		self.settings=Settings()
 		
+		# полноэкранный режим
+		self.screen = py.display.set_mode((0,0), py.FULLSCREEN)
+		self.settings.screen_width = self.screen.get_rect().width
+		self.settings.screen_height = self.screen.get_rect().height
+		
 		self.screen = py.display.set_mode((self.settings.screen_width,self.settings.screen_height))
 		py.display.set_caption("Alien Invasion")
 		# Прописовка корабля
@@ -41,6 +46,8 @@ class AlienInvasion():
 			self.ship.moving_right = True
 		elif event.key == py.K_a:
 			self.ship.moving_left = True
+		elif event.key == py.K_ESCAPE:
+			sys.exit()
 
 	def _check_keyup(self,event):  # вспомогательный для check_ivents
 		# для ивентов отпущенной клавиши
