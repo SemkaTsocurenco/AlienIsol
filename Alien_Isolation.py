@@ -4,6 +4,7 @@ import sys
 import pygame as py
 from settings import Settings
 from ship import Ship
+from bullet import Bullet
 class AlienInvasion():
 	
 	def __init__(self):
@@ -11,12 +12,13 @@ class AlienInvasion():
 		py.init()
 		self.settings=Settings()
 		# размер экрана из настроек
-		self.screen = py.display.set_mode((self.settings.screen_width, self.settings.screen_height))
+		self.screen = py.display.set_mode((0, 0), py.FULLSCREEN)
 		self.buff_wigth = self.settings.screen_width
 		self.buff_heigth = self.settings.screen_height
 		py.display.set_caption("Alien Invasion")
 		# Прописовка корабля
 		self.ship = Ship(self)
+		self.bullets = py.sprite.Group()
 		
 	
 	def run_game(self):
@@ -26,6 +28,8 @@ class AlienInvasion():
 			self._check_ivents()  # проверка на ивенты
 			self._update_screen() #при каждом проходе цикла прописовывается экран
 			self.ship.Update() # обновляет положение корабля
+			self.bullets.update()#обновляет положение пули
+			self._del_bullets() # удаляет патроны за экраном
 			
 	def _check_ivents(self):   #вспомогательный класс для run game
 		# ждёт нажатия клавиш и события мышки
@@ -47,6 +51,8 @@ class AlienInvasion():
 			sys.exit()
 		elif event.key == py.K_o:
 			self.switch_fullscreen()
+		elif event.key == py.K_SPACE:
+			self._fire_bullet()
 			
 	
 	def _check_keyup(self,event):  # вспомогательный для check_ivents
@@ -61,6 +67,8 @@ class AlienInvasion():
 		# обновляет экран
 		self.screen.fill(self.settings.bg_color)
 		self.ship.blitme()
+		for bullet in self.bullets.sprites():
+			bullet.draw_bullet()
 		# последний прорисованный экран
 		py.display.flip()
 		
@@ -80,6 +88,16 @@ class AlienInvasion():
 			self.ship.rect.midbottom = self.screen.get_rect().midbottom
 		self._update_screen()
 
+	def _fire_bullet(self):
+		# создаю новый снаряд
+		if len(self.bullets) < self.settings.bullets_allowed:  # ограниченное кол-во зарядов
+			new_bullet = Bullet(self)
+			self.bullets.add(new_bullet)
+	
+	def _del_bullets(self):
+		for bullet in self.bullets.copy():  # copy для того, чтобы можно было изменять bullets
+			if bullet.rect.bottom <=0:
+				self.bullets.remove(bullet)
 
 if __name__ == '__main__':
 	# создать экземпляр
