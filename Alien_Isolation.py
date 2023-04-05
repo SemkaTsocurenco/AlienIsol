@@ -30,20 +30,26 @@ class AlienInvasion():
 		for event in py.event.get():
 			if event.type == py.QUIT:
 				sys.exit()
-				
 			elif event.type == py.KEYDOWN:
-				if event.key == py.K_d:
-					self.ship.moving_right = True
-				elif event.key == py.K_a:
-					self.ship.moving_left = True
-					
+				self._check_keydown(event)   # события для нажатой клавиши
 			elif event.type == py.KEYUP:
-				if event.key == py.K_d:
-					self.ship.moving_right = False
-				elif event.key == py.K_a:
-					self.ship.moving_left = False
+				self._check_keyup(event)  # события для отпущенной клавиши
 				
-		
+	def _check_keydown(self,event):    # вспомогательный для check_ivents
+		# для ивентов нажатой клавиши
+		if event.key == py.K_d:
+			self.ship.moving_right = True
+		elif event.key == py.K_a:
+			self.ship.moving_left = True
+
+	def _check_keyup(self,event):  # вспомогательный для check_ivents
+		# для ивентов отпущенной клавиши
+		if event.key == py.K_d:
+			self.ship.moving_right = False
+		elif event.key == py.K_a:
+			self.ship.moving_left = False
+			
+			
 	def _update_screen(self):  #вспомогательный класс для run game
 		# обновляет экран
 		self.screen.fill(self.settings.bg_color)
