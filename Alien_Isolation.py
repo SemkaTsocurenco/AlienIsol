@@ -5,6 +5,7 @@ import pygame as py
 from settings import Settings
 from ship import Ship
 from bullet import Bullet
+from Alien import Alien
 class AlienInvasion():
 	
 	def __init__(self):
@@ -15,11 +16,14 @@ class AlienInvasion():
 		self.screen = py.display.set_mode((0, 0), py.FULLSCREEN)
 		self.buff_wigth = self.settings.screen_width
 		self.buff_heigth = self.settings.screen_height
+		self.settings.screen_width = self.screen.get_rect().width
+		self.settings.screen_height = self.screen.get_rect().height
 		py.display.set_caption("Alien Invasion")
 		# Прописовка корабля
 		self.ship = Ship(self)
 		self.bullets = py.sprite.Group()
-		
+		self.alien = py.sprite.Group()
+		self._create_fleet()
 	
 	def run_game(self):
 		# начинает игру
@@ -69,6 +73,7 @@ class AlienInvasion():
 		self.ship.blitme()
 		for bullet in self.bullets.sprites():
 			bullet.draw_bullet()
+		self.alien.draw(self.screen)
 		# последний прорисованный экран
 		py.display.flip()
 		
@@ -98,6 +103,25 @@ class AlienInvasion():
 		for bullet in self.bullets.copy():  # copy для того, чтобы можно было изменять bullets
 			if bullet.rect.bottom <=0:
 				self.bullets.remove(bullet)
+				
+	def _create_fleet(self):
+		# создание флота
+		# создаём пришельца и вычислим количество пришельцев в ряду
+		#интервал между пришельцами равен одному пришельцу
+		alien = Alien(self)
+		alien_width = alien.rect.width
+		available_space_x = self.settings.screen_width - (2 * alien_width)
+		num_aliens_x = available_space_x // (2 * alien_width)
+		
+		#Создадим первый ряд пришельцев
+		for alien_num in range(num_aliens_x):
+			alien = Alien(self)
+			alien.x = alien_width + 2 * alien_width * alien_num
+			alien.rect.x = alien.x
+			self.alien.add(alien)
+			
+			
+	
 
 if __name__ == '__main__':
 	# создать экземпляр

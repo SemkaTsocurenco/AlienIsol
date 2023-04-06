@@ -43,7 +43,7 @@ class Ship():
 	
 def resize_im(path):
 	img=Image.open(path)
-	img=img.resize((75,75))
+	img=img.resize((50,50))
 	img.save(f'{os.path.dirname(path)}\\new_{os.path.basename(path)}')
 	
-resize_im("C:\\Users\\semn-\\PycharmProjects\\AlienIsol\\images\\space_ship.png")
+resize_im("C:\\Users\\semn-\\PycharmProjects\\AlienIsol\\images\\Alien.png")
