@@ -115,12 +115,14 @@ class AlienInvasion():
 		
 		#Создадим первый ряд пришельцев
 		for alien_num in range(num_aliens_x):
-			alien = Alien(self)
-			alien.x = alien_width + 2 * alien_width * alien_num
-			alien.rect.x = alien.x
-			self.alien.add(alien)
+			self._create_alien(alien_num)
 			
-			
+	def _create_alien(self, alien_num):
+		alien = Alien(self)
+		alien_width=alien.rect.width
+		alien.x = alien_width + 2 * alien_width * alien_num
+		alien.rect.x = alien.x
+		self.alien.add(alien)
 	
 
 if __name__ == '__main__':
