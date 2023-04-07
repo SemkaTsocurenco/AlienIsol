@@ -13,11 +13,11 @@ class Settings():
 		#параметры пули
 		self.bullet_color=(60, 60, 60)
 		self.bullet_speed = 2
-		self.bullet_width = 300
+		self.bullet_width = 3
 		self.bullet_heigth= 15
 		self.bullets_allowed =6
 		# Настройка пришельцев
-		self.alien_speed = 10
-		self.fleet_drop =40
+		self.alien_speed = 1.0
+		self.fleet_drop =10
 		self.fleet_direction = 1 # 1 - вправо -1 - влево
 		

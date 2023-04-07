@@ -28,17 +28,19 @@ class AlienInvasion():
 		self.aliens = py.sprite.Group()
 		self._create_fleet()
 		
+		
 	
 	def run_game(self):
 		# начинает игру
 		while True:
 			#Отслеживает события на клавиатуре и мышке
 			self._check_ivents()  # проверка на ивенты
+			if self.stat.game_active:
+				self.ship.Update() # обновляет положение корабля
+				self.update_bullets()#обновляет положение пули
+				self._update_aliens() # урпавляет флотом пришельцев
 			self._update_screen() #при каждом проходе цикла прописовывается экран
-			self.ship.Update() # обновляет положение корабля
-			self.update_bullets()#обновляет положение пули
-			self._update_aliens() # урпавляет флотом пришельцев
-			
+
 			
 	def _check_ivents(self):   #вспомогательный класс для run game
 		# ждёт нажатия клавиш и события мышки
@@ -107,13 +109,14 @@ class AlienInvasion():
 		
 	def _check_bullet_alien_collide(self):
 		collisions = py.sprite.groupcollide(
-			self.bullets, self.aliens, False, True)
+			self.bullets, self.aliens, True, True)
 		# первый Т показывает надо ли уничтожать пулю, второй-пришельца
 		if not self.aliens:
 			# удаление существующих снарядов и добавление нового флота
 			self.bullets.empty()
 			self._create_fleet()
 			self.settings.alien_speed += 0.5
+			
 		
 	def _fire_bullet(self):
 		# создаю новый снаряд
@@ -160,18 +163,30 @@ class AlienInvasion():
 		# колизия пришелец - корабль
 		if py.sprite.spritecollideany(self.ship, self.aliens):
 			self._ship_hit()
+		self._check_aliens_bottom()
+		
 			
 	def _ship_hit(self):
-		self.stat.ships_left -= 1
-		#очистка
-		self.aliens.empty()
-		self.bullets.empty()
-		#новый флот
-		self._create_fleet()
-		self.ship.center_ship()
+		if self.stat.ships_left > 0:
+			self.stat.ships_left -= 1
+			#очистка
+			self.aliens.empty()
+			self.bullets.empty()
+			#новый флот
+			self._create_fleet()
+			self.ship.center_ship()
+			# небольшая пауза
+			sleep(0.5)
+		else:
+			self.stat.game_active = False
 		
-		sleep(0.5)
-		
+	def _check_aliens_bottom(self):
+		# добрались ли пришельцы до низа экрана
+		screen_rect = self.screen.get_rect()
+		for alien in self.aliens.sprites():
+			if alien.rect.bottom >= screen_rect.bottom:
+				self._ship_hit()
+				break
 	def _check_fleet_edges(self):
 		for alien in self.aliens.sprites():
 			if alien.check_edges():
