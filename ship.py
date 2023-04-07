@@ -38,6 +38,10 @@ class Ship():
 		#обновление rect на основании х
 		self.rect.x = self.x
 	
+	def center_ship(self):
+		# корабль по центру
+		self.rect.midbottom=self.screen_rect.midbottom
+		self.x = float(self.rect.x)
 	
 	
 	

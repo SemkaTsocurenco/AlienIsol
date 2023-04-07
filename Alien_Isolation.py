@@ -1,8 +1,10 @@
 # Создадим класс для окна в pygame
 
 import sys
+from time import sleep
 import pygame as py
 from settings import Settings
+from game_stat import stat
 from ship import Ship
 from bullet import Bullet
 from Alien import Alien
@@ -12,6 +14,7 @@ class AlienInvasion():
 		# инициализирует работу класса
 		py.init()
 		self.settings=Settings()
+		self.stat = stat(self)
 		# размер экрана из настроек
 		self.screen = py.display.set_mode((0, 0), py.FULLSCREEN)
 		self.buff_wigth = self.settings.screen_width
@@ -33,8 +36,7 @@ class AlienInvasion():
 			self._check_ivents()  # проверка на ивенты
 			self._update_screen() #при каждом проходе цикла прописовывается экран
 			self.ship.Update() # обновляет положение корабля
-			self.bullets.update()#обновляет положение пули
-			self._del_bullets() # удаляет патроны за экраном
+			self.update_bullets()#обновляет положение пули
 			self._update_aliens() # урпавляет флотом пришельцев
 			
 			
@@ -96,6 +98,23 @@ class AlienInvasion():
 			self.ship.rect.midbottom = self.screen.get_rect().midbottom
 		self._update_screen()
 
+
+	def update_bullets(self):
+		self.bullets.update()
+		self._del_bullets()
+		# проверика попадания в пришельцев и их уничтожение
+		self._check_bullet_alien_collide()
+		
+	def _check_bullet_alien_collide(self):
+		collisions = py.sprite.groupcollide(
+			self.bullets, self.aliens, False, True)
+		# первый Т показывает надо ли уничтожать пулю, второй-пришельца
+		if not self.aliens:
+			# удаление существующих снарядов и добавление нового флота
+			self.bullets.empty()
+			self._create_fleet()
+			self.settings.alien_speed += 0.5
+		
 	def _fire_bullet(self):
 		# создаю новый снаряд
 		if len(self.bullets) < self.settings.bullets_allowed:  # ограниченное кол-во зарядов
@@ -138,7 +157,20 @@ class AlienInvasion():
 	def _update_aliens(self):
 		self._check_fleet_edges()
 		self.aliens.update()
+		# колизия пришелец - корабль
+		if py.sprite.spritecollideany(self.ship, self.aliens):
+			self._ship_hit()
+			
+	def _ship_hit(self):
+		self.stat.ships_left -= 1
+		#очистка
+		self.aliens.empty()
+		self.bullets.empty()
+		#новый флот
+		self._create_fleet()
+		self.ship.center_ship()
 		
+		sleep(0.5)
 		
 	def _check_fleet_edges(self):
 		for alien in self.aliens.sprites():
