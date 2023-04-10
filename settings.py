@@ -17,7 +17,7 @@ class Settings():
 		self.bullet_heigth= 15
 		self.bullets_allowed =6
 		# Настройка пришельцев
-		self.alien_speed = 1.0
+		self.alien_speed = 1.5
 		self.fleet_drop =10
 		self.fleet_direction = 1 # 1 - вправо -1 - влево
 		

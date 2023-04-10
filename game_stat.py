@@ -4,7 +4,7 @@ import pygame
 class stat():
 	
 	def __init__(self,ai_game):
-		self.game_active = False
+		self.game_active = True
 		self.set = ai_game.settings
 		self.reset_stat()
 		
